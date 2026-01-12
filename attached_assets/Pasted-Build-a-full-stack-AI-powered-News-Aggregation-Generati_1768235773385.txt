@@ -1,0 +1,137 @@
+Build a full-stack AI-powered News Aggregation & Generation App with the following requirements:
+
+Core Functionality
+
+Every 1 hour, automatically generate the Top 10 latest news articles across categories such as:
+
+World
+
+Technology
+
+Business
+
+Politics
+
+Entertainment
+
+Science
+
+Sports
+
+Fetch trending topics or raw headlines from reliable public news sources (RSS feeds or APIs), then rewrite and expand them using AI so that:
+
+Content is 100% plagiarism-free
+
+Written in simple, easy-to-understand language
+
+Sounds natural, human, and engaging
+
+Avoids robotic or repetitive phrasing
+
+News Writing Rules
+
+Each article must be 400–700 words
+
+Use short paragraphs, sub-headings, and storytelling
+
+Explain why the news matters to a normal person
+
+Avoid jargon unless explained simply
+
+Title Generation (VERY IMPORTANT)
+
+Generate irresistible, ultra-clickable headlines that:
+
+Create curiosity without clickbait lies
+
+Use emotional hooks, power words, or urgency
+
+Make users feel they must click
+
+Examples:
+
+“This One Decision Could Change How Millions Live Starting Tomorrow”
+
+“Nobody Expected This Tech Giant’s Next Move — Here’s What Happened”
+
+“A Silent Shift Is Happening Worldwide, And Almost No One Is Talking About It”
+
+Titles must feel extraordinary, dramatic, and premium, not generic.
+
+Database
+
+Save all generated news articles to a database
+
+Store:
+
+title
+
+category
+
+full content
+
+short summary
+
+generated timestamp
+
+source reference (original headline/source only for internal use)
+
+Prevent duplicate news from being saved
+
+Backend
+
+Use Node.js with Express (or Python with FastAPI)
+
+Use PostgreSQL or MongoDB
+
+Implement a cron job / scheduler to run every hour
+
+API
+
+Create APIs to:
+
+Fetch latest 10 news
+
+Fetch news by category
+
+Fetch news by date
+
+Frontend
+
+Simple, clean UI (React preferred)
+
+Homepage shows latest 10 news with bold, dramatic titles
+
+Click opens full article view
+
+AI Usage
+
+Use OpenAI or similar LLM for:
+
+Rewriting news
+
+Expanding content
+
+Generating irresistible titles
+
+Ensure AI output is original, plagiarism-free, and not copied from sources
+
+Quality Controls
+
+Do NOT repeat phrases across articles
+
+Ensure each article feels unique
+
+Add logic to slightly vary writing style per article
+
+Deliverables
+
+Complete working app
+
+Clean project structure
+
+README with setup instructions
+
+Environment variable support for API keys
+
+Build the app as if it were going to be used by millions of users, focusing on performance, readability, and content quality.
