@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function processArticle(title: string, content: string, category: string): Promise<{ title: string; content: string; summary: string } | null> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "openai/gpt-oss-120b:groq",
       messages: [
         {
           role: "system",
