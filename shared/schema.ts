@@ -5,6 +5,8 @@ import { z } from "zod";
 export const articles = pgTable("articles", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  slug: text("slug"), // URL-friendly slug generated from title (nullable for existing data)
+  excerpt: text("excerpt"), // Short excerpt/preview text (nullable for existing data)
   content: text("content").notNull(), // The full rewritten 400-700 word article
   summary: text("summary").notNull(), // Short summary
   category: text("category").notNull(),

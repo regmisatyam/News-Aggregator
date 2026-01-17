@@ -6,6 +6,7 @@ import { z } from "zod";
 import cron from "node-cron";
 import { fetchRSSNews } from "./lib/news";
 import { processArticle } from "./lib/openai";
+import { generateSlug, generateExcerpt } from "./lib/utils";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -27,7 +28,18 @@ export async function registerRoutes(
 
   app.get(api.articles.get.path, async (req, res) => {
     try {
-      const article = await storage.getArticle(Number(req.params.id));
+      const idOrSlug = req.params.id;
+      
+      // Try to get by slug first, then fall back to id
+      let article: typeof storage.getArticle extends (...args: any) => Promise<infer R> ? R : never;
+      
+      // Check if it's a numeric id or a slug
+      if (/^\d+$/.test(idOrSlug)) {
+        article = await storage.getArticle(Number(idOrSlug));
+      } else {
+        article = await storage.getArticleBySlug(idOrSlug);
+      }
+      
       if (!article) {
         return res.status(404).json({ message: "Article not found" });
       }
@@ -87,9 +99,15 @@ async function generateNews(): Promise<number> {
     const processed = await processArticle(raw.title, raw.content, raw.category);
     
     if (processed) {
-      // 3. Save
+      // 3. Generate slug and excerpt
+      const slug = generateSlug(processed.title);
+      const excerpt = generateExcerpt(processed.summary);
+      
+      // 4. Save
       await storage.createArticle({
         title: processed.title,
+        slug,
+        excerpt,
         content: processed.content,
         summary: processed.summary,
         category: raw.category,

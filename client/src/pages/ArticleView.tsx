@@ -7,8 +7,13 @@ import { Separator } from "@/components/ui/separator";
 
 export default function ArticleView() {
   const [, params] = useRoute("/article/:id");
-  const id = parseInt(params?.id || "0");
-  const { data: article, isLoading, error } = useArticle(id);
+  const idOrSlug = params?.id || "";
+  
+  // Try to parse as number, otherwise use as slug
+  const parsedId = parseInt(idOrSlug);
+  const identifier = !isNaN(parsedId) && parsedId.toString() === idOrSlug ? parsedId : idOrSlug;
+  
+  const { data: article, isLoading, error } = useArticle(identifier);
 
   if (isLoading) {
     return (

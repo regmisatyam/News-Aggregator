@@ -5,6 +5,7 @@ import { eq, desc } from "drizzle-orm";
 export interface IStorage {
   getArticles(limit?: number, category?: string): Promise<Article[]>;
   getArticle(id: number): Promise<Article | undefined>;
+  getArticleBySlug(slug: string): Promise<Article | undefined>;
   createArticle(article: InsertArticle): Promise<Article>;
   getArticleByOriginalSource(source: string): Promise<Article | undefined>;
   getCategories(): Promise<string[]>;
@@ -23,6 +24,11 @@ export class DatabaseStorage implements IStorage {
 
   async getArticle(id: number): Promise<Article | undefined> {
     const [article] = await db.select().from(articles).where(eq(articles.id, id));
+    return article;
+  }
+
+  async getArticleBySlug(slug: string): Promise<Article | undefined> {
+    const [article] = await db.select().from(articles).where(eq(articles.slug, slug));
     return article;
   }
 

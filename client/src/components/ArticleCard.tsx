@@ -14,9 +14,12 @@ export function ArticleCard({ article, featured = false, compact = false }: Arti
     ? formatDistanceToNow(new Date(article.createdAt), { addSuffix: true })
     : 'Recently';
 
+  // Use slug if available, otherwise fall back to id
+  const articleUrl = article.slug ? `/article/${article.slug}` : `/article/${article.id}`;
+
   if (compact) {
     return (
-      <Link href={`/article/${article.id}`} className="group flex gap-4 items-start py-4 border-b border-border/60 hover:bg-secondary/30 transition-colors p-2 -mx-2">
+      <Link href={articleUrl} className="group flex gap-4 items-start py-4 border-b border-border/60 hover:bg-secondary/30 transition-colors p-2 -mx-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-accent">
@@ -43,7 +46,7 @@ export function ArticleCard({ article, featured = false, compact = false }: Arti
 
   if (featured) {
     return (
-      <Link href={`/article/${article.id}`} className="group block mb-12">
+      <Link href={articleUrl} className="group block mb-12">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="order-2 md:order-1 space-y-4">
             <div className="flex items-center gap-3">
@@ -88,7 +91,7 @@ export function ArticleCard({ article, featured = false, compact = false }: Arti
   }
 
   return (
-    <Link href={`/article/${article.id}`} className="group flex flex-col h-full border border-transparent hover:border-border hover:bg-white hover:shadow-lg transition-all duration-300 p-4 -m-4">
+    <Link href={articleUrl} className="group flex flex-col h-full border border-transparent hover:border-border hover:bg-white hover:shadow-lg transition-all duration-300 p-4 -m-4">
       {article.imageUrl && (
         <div className="aspect-video w-full bg-muted mb-4 overflow-hidden">
           <img 

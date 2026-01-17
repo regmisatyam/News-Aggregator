@@ -17,11 +17,11 @@ export function useArticles(category?: string) {
   });
 }
 
-export function useArticle(id: number) {
+export function useArticle(idOrSlug: number | string) {
   return useQuery({
-    queryKey: [api.articles.get.path, id],
+    queryKey: [api.articles.get.path, idOrSlug],
     queryFn: async () => {
-      const url = buildUrl(api.articles.get.path, { id });
+      const url = buildUrl(api.articles.get.path, { id: idOrSlug });
       const res = await fetch(url, { credentials: "include" });
       
       if (res.status === 404) return null;
