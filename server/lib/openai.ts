@@ -1,15 +1,14 @@
-import OpenAI from "openai";
+import Cerebras from '@cerebras/cerebras_cloud_sdk';
 
-// Replit's integration should set OPENAI_API_KEY
-const openai = new OpenAI({ 
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL
+// Initialize Cerebras client
+const client = new Cerebras({
+  apiKey: process.env.CEREBRAS_API_KEY,
 });
 
 export async function processArticle(title: string, content: string, category: string): Promise<{ title: string; content: string; summary: string } | null> {
   try {
-    const response = await openai.chat.completions.create({
-      model: "openai/gpt-oss-120b:groq",
+    const response = await client.chat.completions.create({
+      model: "gpt-oss-120b",
       messages: [
         {
           role: "system",
@@ -24,12 +23,12 @@ export async function processArticle(title: string, content: string, category: s
         },
         {
           role: "user",
-          content: `Category: ${category}\nOriginal Title: ${title}\nOriginal Content/Snippet: ${content}\n\nRewrite this.`
+          content: `Category: ${category}\nOriginal Title: ${title}\nOriginal Content/Snippet: ${content}\n\nRewrite this as valid JSON.`
         }
       ],
-      response_format: { type: "json_object" }
     });
 
+    // @ts-ignore - Cerebras SDK types are not fully defined
     const result = JSON.parse(response.choices[0].message.content || "{}");
     return {
       title: result.title || title,
@@ -37,7 +36,7 @@ export async function processArticle(title: string, content: string, category: s
       summary: result.summary || "Summary unavailable."
     };
   } catch (error) {
-    console.error("OpenAI processing error:", error);
+    console.error("Cerebras AI processing error:", error);
     return null;
   }
 }
