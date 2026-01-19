@@ -8,6 +8,30 @@ import { fetchRSSNews } from "./lib/news";
 import { processArticle } from "./lib/openai";
 import { generateSlug, generateExcerpt } from "./lib/utils";
 
+// Helper to generate image for an article
+async function generateArticleImage(articleId: number): Promise<string | null> {
+  try {
+    const response = await fetch(`https://dailyfeed-images.onrender.com/news-image?id=${articleId}`);
+    
+    if (!response.ok) {
+      console.error(`Failed to generate image for article ${articleId}: ${response.status}`);
+      return null;
+    }
+    
+    const data = await response.json();
+    
+    // The API returns the URL without https://, so we need to add it
+    if (data.url) {
+      return `https://${data.url}`;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error generating image for article ${articleId}:`, error);
+    return null;
+  }
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -86,6 +110,7 @@ async function generateNews(): Promise<number> {
   console.log(`Fetched ${rawArticles.length} raw articles.`);
 
   let savedCount = 0;
+  const createdArticleIds: number[] = [];
 
   for (const raw of rawArticles) {
     // 1. Deduplication
@@ -103,8 +128,8 @@ async function generateNews(): Promise<number> {
       const slug = generateSlug(processed.title);
       const excerpt = generateExcerpt(processed.summary);
       
-      // 4. Save
-      await storage.createArticle({
+      // 4. Save article first (must be published before image generation)
+      const article = await storage.createArticle({
         title: processed.title,
         slug,
         excerpt,
@@ -112,13 +137,29 @@ async function generateNews(): Promise<number> {
         summary: processed.summary,
         category: raw.category,
         originalSource: raw.originalSource,
-        imageUrl: null, // Could add image generation here if needed later
+        imageUrl: null, // Will be updated after image generation
         isPublished: true
       });
+      
+      createdArticleIds.push(article.id);
       savedCount++;
     }
   }
 
   console.log(`Generated and saved ${savedCount} new articles.`);
+
+  // 5. Generate images for all published articles
+  console.log("Generating images for published articles...");
+  for (const articleId of createdArticleIds) {
+    console.log(`Generating image for article ${articleId}...`);
+    const imageUrl = await generateArticleImage(articleId);
+    
+    if (imageUrl) {
+      await storage.updateArticleImageUrl(articleId, imageUrl);
+      console.log(`Updated article ${articleId} with image: ${imageUrl}`);
+    }
+  }
+
+  console.log(`Image generation complete.`);
   return savedCount;
 }

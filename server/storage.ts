@@ -9,6 +9,7 @@ export interface IStorage {
   createArticle(article: InsertArticle): Promise<Article>;
   getArticleByOriginalSource(source: string): Promise<Article | undefined>;
   getCategories(): Promise<string[]>;
+  updateArticleImageUrl(id: number, imageUrl: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -48,6 +49,13 @@ export class DatabaseStorage implements IStorage {
   async getCategories(): Promise<string[]> {
     const result = await db.selectDistinct({ category: articles.category }).from(articles);
     return result.map(r => r.category);
+  }
+
+  async updateArticleImageUrl(id: number, imageUrl: string): Promise<void> {
+    await db
+      .update(articles)
+      .set({ imageUrl })
+      .where(eq(articles.id, id));
   }
 }
 
