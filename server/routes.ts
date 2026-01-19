@@ -22,7 +22,7 @@ async function generateArticleImage(articleId: number): Promise<string | null> {
     
     // The API returns the URL without https://, so we need to add it
     if (data.url) {
-      return `https://${data.url}`;
+      return `${data.url}`; //update: no need since using cloudinary(01/19/2026)
     }
     
     return null;
